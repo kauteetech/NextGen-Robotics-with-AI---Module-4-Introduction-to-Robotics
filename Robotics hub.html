@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotics Simulations Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent body scroll */
+        }
+        .main-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+        .sidebar {
+            width: 280px; /* Increased width for longer titles */
+            background-color: #1a1a1a;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #333;
+            transition: width 0.3s ease-in-out;
+            overflow-y: auto;
+        }
+        .sidebar.collapsed {
+            width: 80px; /* Increased width to show icons completely */
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .sidebar.collapsed .sidebar-header-title {
+            opacity: 0;
+            width: 0;
+            transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+        .sidebar-header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .sidebar-toggle-btn {
+            background-color: transparent;
+            border: none;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+        .sidebar-toggle-btn svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .sidebar-toggle-btn .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: #b0b0b0;
+            transition: background-color 0.2s, color 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+        .sidebar.collapsed .sidebar-link-text {
+            display: none;
+        }
+        .sidebar-link-icon {
+            margin-right: 0.75rem;
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        .sidebar.collapsed .sidebar-link-icon {
+            margin-right: 0;
+            justify-content: center;
+            width: 100%;
+        }
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #121212;
+            padding: 1rem;
+        }
+        .iframe-container {
+            flex-grow: 1;
+            background-color: #1e1e1e;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .hidden {
+            display: none;
+        }
+        
+        /* New styles for the introduction page */
+        .intro-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            background-color: #1e1e1e;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 2rem;
+        }
+        .intro-page h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ef4444; /* A shade of red for the title */
+            margin-bottom: 0.5rem;
+        }
+        .intro-page h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .intro-page p {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.5;
+        }
+        .intro-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Sidebar for navigation -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-header-title">Robotics Hub</span>
+                <button id="sidebar-toggle" class="sidebar-toggle-btn" title="Collapse Menu">
+                    <svg id="hamburger-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg id="chevron-right-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-2">
+                <!-- Navigation links from the provided list -->
+                <a href="#" class="sidebar-link active" data-src="https://kauteetech.github.io/Introduction-to-Robotics-Dynamics-and-Control/" title="Introduction to Robotics: Dynamics and Control">
+                    <span class="sidebar-link-icon">⚙️</span>
+                    <span class="sidebar-link-text">Introduction to Robotics: Dynamics and Control</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Cart-Pole-Interactive-Simulation/" title="Cart-Pole Interactive Simulation">
+                    <span class="sidebar-link-icon">🤖</span>
+                    <span class="sidebar-link-text">Cart-Pole Interactive Simulation</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Acrobot-Interactive-Simulation/" title="Acrobot Interactive Simulation">
+                    <span class="sidebar-link-icon">🤸</span>
+                    <span class="sidebar-link-text">Acrobot Interactive Simulation</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Planar-Quadrotor-Simulation/" title="Planar Quadrotor Simulation">
+                    <span class="sidebar-link-icon">🚁</span>
+                    <span class="sidebar-link-text">Planar Quadrotor Simulation</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Simple-Pendulum/" title="The Simple Pendulum">
+                    <span class="sidebar-link-icon">🕰️</span>
+                    <span class="sidebar-link-text">The Simple Pendulum</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Double-Pendulum-Interactive-Simulation/" title="Double Pendulum Interactive Simulation">
+                    <span class="sidebar-link-icon">🔗</span>
+                    <span class="sidebar-link-text">Double Pendulum Interactive Simulation</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Rimless-Wheel-Simulation/" title="Rimless Wheel Simulation">
+                    <span class="sidebar-link-icon">🛞</span>
+                    <span class="sidebar-link-text">Rimless Wheel Simulation</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Compass-Gait-Walking-Robot-Simulator/" title="Compass Gait Walking Robot Simulator">
+                    <span class="sidebar-link-icon">🚶</span>
+                    <span class="sidebar-link-text">Compass Gait Walking Robot Simulator</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/Kneed-Walker-Robot-Simulator/" title="Kneed Walker Robot Simulator">
+                    <span class="sidebar-link-icon">🤖</span>
+                    <span class="sidebar-link-text">Kneed Walker Robot Simulator</span>
+                </a>
+                <a href="#" class="sidebar-link" data-src="https://kauteetech.github.io/N-Link-Serial-Manipulators/" title="N Link Serial Manipulator">
+                    <span class="sidebar-link-icon">🦾</span>
+                    <span class="sidebar-link-text">N Link Serial Manipulator</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main content area for the simulations -->
+        <main class="content-area">
+            <div id="intro-page" class="intro-page">
+                <img src="logoiiscwhite.png" alt="IISc Logo" class="intro-logo">
+                <h1>NextGen Robotics with AI</h1>
+                <h2>Module 4: Introduction to Robotics</h2>
+                <br>
+                <p>Jishnu Keshavan</p>
+                <p>Assistant Professor</p>
+                <p>Department of Mechanical Engineering & RBCCPS</p>
+                <p>Indian Institute of Science</p>
+                <p>12/07/2025</p>
+                <br>
+                <p>Office: 405, Ph: (080) 2293 2904,</p>
+                <p>kjishnu@iisc.ac.in</p>
+            </div>
+            <div id="simulation-iframe-container" class="iframe-container hidden">
+                <iframe id="simulation-iframe" src="" frameborder="0"></iframe>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get references to all the elements we need
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggleBtn = document.getElementById('sidebar-toggle');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const introPage = document.getElementById('intro-page');
+        const iframeContainer = document.getElementById('simulation-iframe-container');
+        const iframe = document.getElementById('simulation-iframe');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+        const chevronRightIcon = document.getElementById('chevron-right-icon');
+
+        // Initially set the first link as active but do not load the iframe
+        const firstLink = sidebarLinks[0];
+        if (firstLink) {
+            firstLink.classList.add('active');
+        }
+
+        // Add click event listeners to each sidebar link
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default link behavior
+                
+                // Remove 'active' class from all links
+                sidebarLinks.forEach(item => item.classList.remove('active'));
+                
+                // Add 'active' class to the clicked link
+                link.classList.add('active');
+                
+                // Hide the intro page and show the iframe
+                introPage.classList.add('hidden');
+                iframeContainer.classList.remove('hidden');
+
+                // Get the URL from the data-src attribute and update the iframe
+                const simulationUrl = link.dataset.src;
+                if (simulationUrl) {
+                    iframe.src = simulationUrl;
+                }
+            });
+        });
+
+        // Toggle the sidebar's collapsed state and update the icons
+        sidebarToggleBtn.addEventListener('click', () => {
+            // Check the current state of the sidebar to determine the action
+            const isCollapsed = sidebar.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                // If it's collapsed, un-collapse it and show the hamburger icon
+                sidebar.classList.remove('collapsed');
+                hamburgerIcon.classList.remove('hidden');
+                chevronRightIcon.classList.add('hidden');
+                sidebarToggleBtn.title = 'Collapse Menu';
+            } else {
+                // If it's not collapsed, collapse it and show the chevron icon
+                sidebar.classList.add('collapsed');
+                hamburgerIcon.classList.add('hidden');
+                chevronRightIcon.classList.remove('hidden');
+                sidebarToggleBtn.title = 'Expand Menu';
+            }
+        });
+    </script>
+
+</body>
+</html>
